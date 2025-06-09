@@ -3,7 +3,7 @@ import { PUPPETEER_EXECUTABLE_PATH } from './environment.js';
 
 export const getPuppeteerLaunchOptions = (headless: boolean = true): PuppeteerLaunchOptions => {
   const options: PuppeteerLaunchOptions = {
-    headless: headless ? 'new' : false,
+    headless: headless,
     args: [
       '--disable-dev-shm-usage',
       '--disable-gpu',

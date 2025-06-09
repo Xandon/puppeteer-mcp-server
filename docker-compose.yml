@@ -29,7 +29,7 @@ services:
       - MAX_CONCURRENT_PAGES=5
       - RATE_LIMIT_WINDOW_MS=900000
       - RATE_LIMIT_MAX_REQUESTS=100
-      - PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome
+      - PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
       - RUNNING_IN_DOCKER=true
     
     volumes:
@@ -76,7 +76,7 @@ services:
         hard: 65536
     
     # Stdin/stdout for MCP communication
-    stdin_open: true
+    stdin_open: false
     tty: false
 
   # Optional: Monitoring service
