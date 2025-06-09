@@ -30,7 +30,6 @@ RUN npm ci --omit=dev
 
 # Copy application code
 COPY . .
-RUN npm run build
 
 # Create necessary directories and set permissions
 RUN mkdir -p /app/logs /app/downloads \
@@ -49,4 +48,4 @@ ENV NODE_ENV=production
 
 EXPOSE 3000
 
-CMD ["node", "build/index.js"]
+CMD ["node", "src/simple.js"]
