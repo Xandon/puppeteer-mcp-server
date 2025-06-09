@@ -1,0 +1,40 @@
+{
+  "name": "puppeteer-mcp-server",
+  "version": "1.0.0",
+  "description": "Model Context Protocol server for Puppeteer browser automation",
+  "type": "module",
+  "main": "build/index.js",
+  "bin": {
+    "puppeteer-mcp-server": "./build/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node build/index.js",
+    "dev": "tsx --watch src/index.ts",
+    "inspector": "mcp-inspector build/index.js"
+  },
+  "keywords": [
+    "mcp",
+    "modelcontextprotocol",
+    "puppeteer",
+    "browser-automation",
+    "ai-tools"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.6.0",
+    "puppeteer": "^22.0.0",
+    "zod": "^3.22.0",
+    "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.24",
+    "typescript": "^5.3.3",
+    "tsx": "^4.7.1",
+    "@modelcontextprotocol/inspector": "^0.1.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

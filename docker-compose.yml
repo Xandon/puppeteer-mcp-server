@@ -1,0 +1,105 @@
+version: '3.8'
+
+services:
+  puppeteer-mcp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    
+    container_name: puppeteer-mcp-server
+    
+    # Security capabilities
+    cap_add:
+      - SYS_ADMIN
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    
+    environment:
+      - NODE_ENV=production
+      - LOG_LEVEL=info
+      - PUPPETEER_TIMEOUT=30000
+      - MAX_CONCURRENT_PAGES=5
+      - RATE_LIMIT_WINDOW_MS=900000
+      - RATE_LIMIT_MAX_REQUESTS=100
+      - PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome
+      - RUNNING_IN_DOCKER=true
+    
+    volumes:
+      - ./downloads:/app/downloads
+      - ./logs:/app/logs
+      - /dev/shm:/dev/shm
+    
+    # Shared memory for Chrome
+    shm_size: 1gb
+    
+    # Init process for zombie cleanup
+    init: true
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "node", "-e", "process.exit(0)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    restart: unless-stopped
+    
+    # Security options
+    security_opt:
+      - seccomp:./chrome.json
+    
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    
+    # Network mode
+    network_mode: bridge
+    
+    # Prevent OOM killer
+    oom_kill_disable: false
+    
+    # Process limits
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    
+    # Stdin/stdout for MCP communication
+    stdin_open: true
+    tty: false
+
+  # Optional: Monitoring service
+  monitoring:
+    image: prom/node-exporter:latest
+    container_name: puppeteer-mcp-monitoring
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    ports:
+      - "9100:9100"
+    restart: unless-stopped
+    profiles:
+      - monitoring
+
+networks:
+  default:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: puppeteer-mcp-bridge
